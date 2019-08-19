@@ -1,0 +1,12 @@
+node_modules
+/conf
+/dist
+/output
+/uploads
+/conf
+/www
+/socketConfig.json
+*.log
+/testsample
+/.nyc_output
+/models
