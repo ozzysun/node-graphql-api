@@ -159,6 +159,8 @@ class ORM {
   }
   // 將json設定值轉成model物件
   getModelFromJson(data) {
+    console.log('data==')
+    console.log(data)
     for (const prop in data[0]) {
       data[0][prop].type = this.getTypeFromStr(data[0][prop].type)
     }
