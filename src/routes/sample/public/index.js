@@ -1,5 +1,6 @@
 // 動態路徑無法build執行檔，以相對路徑導入
 const RouteClass = require('../../../core/RouteClass')
+const { getSchemaFromJSON } = require('../../../core/graphql/util')
 class Route extends RouteClass {
   routes() {
     this.get('text', (req, res) => {
@@ -19,6 +20,11 @@ class Route extends RouteClass {
       const orm = this.orm({ host: req.params.host, db: req.params.db })
       const schema = await orm.schema(req.params.table)
       this.json(res, schema)
+    })
+    // 測試建立graphql schema
+    this.get('graphql/:host/:db/:table/schema', async(req, res) => {
+      const result = await getSchemaFromJSON(req.params.host, req.params.db, req.params.table)
+      this.json(res, result)
     })
   }
 }
