@@ -3,22 +3,23 @@
 * 提供Restful API 資料服務
 * 通用API
 * 封裝可執行檔
+* graphql支援
 ### 安裝
 * 安裝global工具
   npm install mocha gulp pkg nodemon
 * 目錄下執行 npm install
 ### 開發指令
 * gulp
-  編譯產生dist目錄，並執行dist/index
-* gulp dev
   執行 src/index
+* gulp es5
+  編譯產生dist目錄，並執行dist/index
 * gulp build
   產生執行檔在output目錄下
 * gulp test
   執行單元測試，測試結果在test/report.log
 * gulp add-route --ns 目錄名稱
   建立新的route規則
-＊gulp build-model --host 主機 --db db名稱 --table table名稱 --type
+* gulp build-model --host 主機 --db db名稱 --table table名稱 --type
   - 建立指定主機指定db上的table schema
   - table (非必填)若不設定為設定則會建立整個db table scema
   - table 若為多個table 以,區隔 例 --table a,b,c , table
@@ -141,6 +142,10 @@
 5. 建立db table model
      - url: http://localhost:3138/global/model/build/:host/:db
      - method: get
-
+### Graphql 使用
+1. 自訂ObjectType
+     - src/graphql/schema/types 目錄管理自訂type
+2. 管理query
+     - src/graphql/schema/query 目錄管理query功能
    
   

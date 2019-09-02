@@ -9,16 +9,16 @@ const ip = require('ip')
 const { loadFolderFiles } = require('../utils/file')
 const beforeAfter = require('./beforeAfter')
 const jwt = require('./jwt')
-const { useGraphql } = require(`../../graphql`)
+const { createGraphql } = require('../../graphql')
 const OZSocket = require('./socket')
 const session = require('express-session')
 const getRouter = async(port, staticPath = './public') => {
   try {
     // 產生express app 與router, server
-    const { router, app, server } = createAPIServer(port, staticPath)
+    const { router, app, server } = await createAPIServer(port, staticPath)
     let socket = null
     if (global.config.socket.enable) {
-      socket = createSocketServer(global.config.socket.port, app)
+      socket = await createSocketServer(global.config.socket.port, app)
     }
     await getRoutes(router, global.routes)
     return { router, app, server, socket }
@@ -26,7 +26,7 @@ const getRouter = async(port, staticPath = './public') => {
     console.log(e)
   }
 }
-const createAPIServer = (apiPort = 3138, staticPath = './public') => {
+const createAPIServer = async(apiPort = 3138, staticPath = './public') => {
   const app = express()
   const router = express.Router()
   // -- app setting ------
@@ -58,6 +58,7 @@ const createAPIServer = (apiPort = 3138, staticPath = './public') => {
   app.use(health.ping())
   app.use('/', router)
   // graphql
+  const useGraphql = await createGraphql()
   useGraphql(router)
   // -- router setting ------
   router.use(beforeAfter)
@@ -67,7 +68,7 @@ const createAPIServer = (apiPort = 3138, staticPath = './public') => {
   })
   return { router, app, server }
 }
-const createSocketServer = (port, app) => {
+const createSocketServer = async(port, app) => {
   const socket = new OZSocket('oz', app)
   socket.listen(port, 'all', (data) => {
     console.log(`Socket RECEIVE Data =${data}`)

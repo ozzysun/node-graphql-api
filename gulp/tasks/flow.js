@@ -17,8 +17,8 @@ gulp.task('default', async() => {
   await shell.exec('npm run start')
 })
 // run es6 script
-gulp.task('dev', async() => {
-  await shell.exec('npm run dev')
+gulp.task('es5', async() => {
+  await shell.exec('npm run es5')
 })
 gulp.task('lint', async() => {
   await shell.exec('npm run lint-watch')

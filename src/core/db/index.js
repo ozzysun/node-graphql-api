@@ -24,10 +24,10 @@ const query = async({ orm, table, params, page, perPage, attributes }) => {
   }
 }
 // 新增  params:加入的column資料
-const create = async({ orm, table, values, transaction = null }) => {
+const create = async({ orm, table, values, transaction }) => {
   let error = null
   const model = await orm.model(table)
-  const opts = transaction !== null ? { transaction } : {}
+  const opts = transaction !== undefined ? { transaction } : {}
   const queryResult = await model.create(values, opts).catch(e => { error = e })
   if (error === null) {
     return queryResult // 回傳 model 物件
@@ -60,11 +60,11 @@ const update = async({ orm, table, values, params }) => {
     return null
   }
 }
-const destroy = async({ orm, table, params, transaction = null }) => {
+const destroy = async({ orm, table, params, transaction }) => {
   let error = null
   const model = await orm.model(table)
   const opts = Object.prototype.hasOwnProperty.call(params, 'where') ? params : { where: params } // 查詢參數
-  if (transaction !== null) opts.transaction = transaction
+  if (transaction !== undefined) opts.transaction = transaction
   const queryResult = await model.destroy(opts).catch(e => { error = e })
   if (error === null) {
     return queryResult // 回傳數字

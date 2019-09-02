@@ -3,14 +3,14 @@ const graphql = require('graphql')
 const getFieldConfig = (field) => {
   // 建立fields { name: , type: ,args}
   const fieldsObj = {
-    type: getType(field.type)
+    type: getObjectType(field.type)
   }
   // 檢查是否有args
   if (field.args !== undefined && Array.isArray(field.args)) {
     fieldsObj.args = {}
     field.args.forEach(arg => {
       fieldsObj.args[arg.name] = {
-        type: getType(arg.type)
+        type: getObjectType(arg.type)
       }
     })
   }
@@ -23,18 +23,20 @@ const getFieldConfig = (field) => {
 const getTypeConfig = (name = 'Query', fields = []) => {
   const fieldsObj = {}
   fields.forEach((field) => {
-    fieldsObj[field.name] = getFieldConfig(field.config)
+    fieldsObj[field.name] = getFieldConfig(field)
   })
   return {
     name: name,
     fields: fieldsObj
   }
 }
-const objectType = (name, fields) => {
+// 建立objecType
+const createObjectType = (name, fields) => {
   const configData = getTypeConfig(name, fields)
   return new graphql.GraphQLObjectType(configData)
 }
-const getType = (typeString) => {
+// 輸入type字串取得objectType
+const getObjectType = (typeString) => {
   let result = graphql.GraphQLString
   switch (typeString) {
     case 'string':
@@ -54,4 +56,10 @@ const getType = (typeString) => {
   }
   return result
 }
-module.exports = { getTypeConfig, getFieldConfig, objectType }
+// 建立schema
+const createSchema= (rootConfig) => {
+  const queryType = new graphql.GraphQLObjectType(rootConfig)
+  const schema = new graphql.GraphQLSchema({ query: queryType })
+  return schema
+}
+module.exports = { getTypeConfig, getFieldConfig, createObjectType, createSchema }

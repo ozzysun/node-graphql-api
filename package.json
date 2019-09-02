@@ -2,11 +2,11 @@
   "name": "node-api",
   "version": "1.0.0",
   "description": "build excuable bundle node api server",
-  "main": "dist/index.js",
-  "bin": "dist/index.js",
+  "main": "src/index.js",
+  "bin": "src/index.js",
   "scripts": {
-    "start": "babel -s inline -d dist -w src | nodemon dist/index.js",
-    "dev": "nodemon src/index.js",
+    "start": "nodemon src/index.js",
+    "es5": "babel -s inline -d dist -w src | nodemon dist/index.js",
     "build": "pkg package.json --out-dir output",
     "compile": "babel -s inline -d dist src",
     "clean": "rimraf dist/*",
@@ -48,7 +48,8 @@
   },
   "pkg": {
     "scripts": [
-      "./dist/routes/**/**/*.js"
+      "./src/routes/**/**/*.js",
+      "./src/graphql/**/**/*.js"
     ],
     "targets": [
       "node10-macos-x64",
