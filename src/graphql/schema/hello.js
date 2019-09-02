@@ -1,14 +1,12 @@
-
-const schemaData = {
-  name: 'firstName',
+module.exports = {
+  name: 'hello',
   config: {
     type: 'string',
     args: [
       { name: 'name', type: 'string' }
     ],
     resolve: (parent, args, context, info) => {
-      return `[${args.name}]`
+      return `hello !! ${args.name}`
     }
   }
 }
-module.exports = schemaData

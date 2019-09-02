@@ -30,6 +30,10 @@ const getTypeConfig = (name = 'Query', fields = []) => {
     fields: fieldsObj
   }
 }
+const objectType = (name, fields) => {
+  const configData = getTypeConfig(name, fields)
+  return new graphql.GraphQLObjectType(configData)
+}
 const getType = (typeString) => {
   let result = graphql.GraphQLString
   switch (typeString) {
@@ -45,7 +49,9 @@ const getType = (typeString) => {
     case 'float':
       result = graphql.GraphQLFloat
       break
+    default:
+      result = typeString
   }
   return result
 }
-module.exports = { getTypeConfig, getFieldConfig }
+module.exports = { getTypeConfig, getFieldConfig, objectType }
