@@ -22,8 +22,8 @@ const createGraphql = async() => {
     }
     return useGraphql
   } catch (e) {
-    // console.log(`graphql error=`)
-    // console.log(e)
+    console.log(`graphql error=`)
+    console.log(e)
     useGraphql = async(app) => {
       console.log('[Warning]!! ...graphql is not exist')
     }
