@@ -36,28 +36,31 @@ const createObjectType = (name, fields) => {
   return new graphql.GraphQLObjectType(configData)
 }
 // 輸入type字串取得objectType
-const getObjectType = (typeString) => {
-  let result = graphql.GraphQLString
-  switch (typeString) {
-    case 'string':
-      result = graphql.GraphQLString
-      break
-    case 'int':
-      result = graphql.GraphQLInt
-      break
-    case 'boolean':
-      result = graphql.GraphQLBoolean
-      break
-    case 'float':
-      result = graphql.GraphQLFloat
-      break
-    default:
-      result = typeString
+const getObjectType = (val) => {
+  // 當非字串 則直接回傳 不作轉換, 若為Array [xxx] or ['int']則轉換成List
+  const isArray = Array.isArray(val)
+  const typeString = isArray ? val[0] : val
+  let typeObj = typeString
+  if (typeof typeString === 'string') {
+    switch (typeString) {
+      case 'string':
+        typeObj = graphql.GraphQLString
+        break
+      case 'int':
+        typeObj = graphql.GraphQLInt
+        break
+      case 'boolean':
+        typeObj = graphql.GraphQLBoolean
+        break
+      case 'float':
+        typeObj = graphql.GraphQLFloat
+        break
+    }
   }
-  return result
+  return isArray ? new graphql.GraphQLList(typeObj) : typeObj
 }
 // 建立schema
-const createSchema= (rootConfig) => {
+const createSchema = (rootConfig) => {
   const queryType = new graphql.GraphQLObjectType(rootConfig)
   const schema = new graphql.GraphQLSchema({ query: queryType })
   return schema
