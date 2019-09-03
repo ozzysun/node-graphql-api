@@ -1,9 +1,10 @@
 ## node-api 說明
 ### 功能
-* 提供Restful API 資料服務
-* 通用API
+* 提供Restful API 資料服務架構
+* 提供graphql 資料服務架構
+* 通用 REST API 支援 db table CRUD
+* 通用 graphql支援 db table查詢
 * 封裝可執行檔
-* graphql支援
 ### 安裝
 * 安裝global工具
   npm install mocha gulp pkg nodemon
@@ -57,6 +58,11 @@
 5. api route設定
      - 請修改conf/routes.yml設定
      - 可設定運行的api url，並對應程式目錄
+6. graphql 設定
+     - 請修改conf/index.yml 下graphql設定允許做通用graphql操作的主機與db 
+     - 已提供通用graphql 做db table查詢
+     - 可在 graphql/types目錄下建立自訂的object type
+     - 可在 graphql/query 目錄下自訂查詢項目
 
 ## 開發指南
 ### 建立route
@@ -94,7 +100,6 @@
      - delete 對應建立delete method
      - json 輸出json
      - orm 取得ORM物件做db連線與操作
-
 ### ORM 資料庫操作
 1. 建立data model
       - orm若要使用model做orm操作需先建立schema model
@@ -122,6 +127,10 @@
       - sync 同步
       - update 更新資料
       - upsert 資料存在則更新，不存在則新增
+### 建立 data model 通用API
+1. 建立
+     - url: http://localhost:3138/global/model/build/:host/:db
+     - method: get
 ### 單一Table 通用API
 1. 查詢
      - url: http://localhost:3138/global/db/:host/:db/:table
@@ -147,5 +156,22 @@
      - src/graphql/schema/types 目錄管理自訂type
 2. 管理query
      - src/graphql/schema/query 目錄管理query功能
+3. 通用graphal使用
+     1. 建立 data model http://localhost:3138/global/model/build/:host/:db
+     2. conf/index.yml 設定graphql [{ host:主機 dbs:[] 允許操作的db]
+     3. 查詢使用方式
+     ```
+      {
+        host名稱{
+          db名稱{
+                table名稱 {
+                    欄位..
+                }
+          }
+        }
+      }
+     ```
+
+        
    
   

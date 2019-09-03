@@ -1,16 +1,12 @@
-const Sample = require('../types/sample')
-const ORM = require('../../../core/db/orm')
+const api_sysdb = require('../types/api_sysdb')
 const schemaData = {
-  name: 'api_sysdb',
-  type: [Sample],
+  name: 'db',
+  type: api_sysdb,
   args: [
-    { name: 'name', type: 'string' }
+    { name: 'host', type: 'string' }, { name: 'db', type: 'string' }, { name: 'table', type: 'string' }
   ],
   resolve: async(parent, args, context, info) => {
-    const orm = new ORM({ host: 'dbLocal', db: 'api_sysdb' })
-    const sql = `select * from sample`
-    const response = await orm.query(sql)
-    return response
+    return { host: args.host, db: args.db, table: args.table }
   }
 }
 module.exports = schemaData

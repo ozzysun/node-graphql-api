@@ -9,9 +9,21 @@ const getFieldConfig = (field) => {
   if (field.args !== undefined && Array.isArray(field.args)) {
     fieldsObj.args = {}
     field.args.forEach(arg => {
+      let fieldType = getObjectType(arg.type)
       fieldsObj.args[arg.name] = {
-        type: getObjectType(arg.type)
+        type: fieldType
       }
+      /*
+      if (arg.default) {
+        fieldsObj.args[arg.name] = {
+          type: fieldType = arg.default
+        }
+      } else {
+        fieldsObj.args[arg.name] = {
+          type: fieldType
+        }
+      }
+      */
     })
   }
   // 檢查是否有resolve

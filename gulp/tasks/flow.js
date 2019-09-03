@@ -8,12 +8,13 @@ const { createConfFolder } = require('../../src/app')
 gulp.task('default', async() => {
   // 若連/conf 都不存在 則透過setting 產生
   await createConfFolder()
-  // copy conf 到dist內 才執行測試
+  /* copy conf 到dist內 才執行測試 已經不需要用到
   const sourcePath = path.resolve('./conf')
   const targetPath = path.resolve('./dist/conf')
   await removeFolder(targetPath)
   await copyFolder(sourcePath, targetPath)
   await shell.exec('npm run compile')
+  */
   await shell.exec('npm run start')
 })
 // run es6 script

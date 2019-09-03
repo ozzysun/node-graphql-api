@@ -1,3 +1,25 @@
 {
   hello(name:"oz")
 }
+
+hello(name:"oz")
+typeSample(name: "oz") {
+  age
+  name
+}
+db(host:"dbLocal",db:"api_sysdb",table:"sample"){
+  table(name:"sample"){
+    id
+    title
+    content
+    subkey
+  }
+    
+}
+{
+  db名稱{
+    table名稱 {
+      欄位..
+    }
+  }
+}
