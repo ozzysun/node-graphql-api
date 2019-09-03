@@ -42,14 +42,23 @@ const createDbType = async(host, db) => {
         name: tableName,
         type: [tableType],
         args: [
-          { name: 'page', type: 'int'},
-          { name: 'perPage', type: 'int'}
+          { name: 'page', type: 'int' },
+          { name: 'perPage', type: 'int' }
         ],
         resolve: async(parent, args, context, info) => {
+          const page = args.page ? args.page : 1
+          const perPage = args.perPage ? args.perPage : 10
           const orm = new ORM({ host, db, table: tableName })
+          const model = await orm.model(tableName)
+          const response = await model.findAndCountAll({
+            offset: (page - 1) * perPage,
+            limit: perPage
+          })
+          /*
           const sql = `select * from ${tableName} limit 10`
           const response = await orm.query(sql)
-          return response
+          */
+          return response.rows
         }
       }
       typeData.fields.push(fieldObj)
