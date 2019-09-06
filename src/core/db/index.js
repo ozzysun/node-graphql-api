@@ -79,11 +79,19 @@ const getQueryOption = ({ params, page, perPage, attributes }) => {
   const queryOpts = Object.prototype.hasOwnProperty.call(params, 'where') ? params : { where: params } // 查詢參數
   // 分頁
   if (page !== undefined && perPage !== undefined) {
+    page = parseInt(page)
+    perPage = parseInt(perPage)
     queryOpts.limit = perPage
     queryOpts.offset = perPage * (page - 1)
   }
-  // 查詢欄位
-  if (attributes !== undefined) queryOpts.attributes = attributes
+  // 查詢欄位 attributes若為 ,分隔字串 轉為array
+  if (attributes !== undefined) {
+    if (Array.isArray(attributes)) {
+      queryOpts.attributes = attributes
+    } else if (typeof attributes === 'string') {
+      queryOpts.attributes = attributes.indexOf(',') !== -1 ? attributes.split(',') : attributes
+    }
+  }
   // 排序
   queryOpts.raw = true
   return queryOpts

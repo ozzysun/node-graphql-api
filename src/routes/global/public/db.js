@@ -7,6 +7,9 @@ class Route extends RouteClass {
       const orm = this.orm({ host: req.params.host, db: req.params.db })
       const queryResult = await query({
         orm, table: req.params.table,
+        attributes: req.query.attributes,
+        page: req.query.page,
+        perPage: req.query.perPage,
         params: {}
       })
       this.json(res, queryResult)

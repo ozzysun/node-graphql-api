@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize')
+const { getModel } = require('../../../node_modules/sequelize-auto/lib/utils')
 const { trace } = require('../utils/common')
-const { readJSON } = require('../utils/file')
+// const { readJSON } = require('../utils/file')
 class ORM {
   constructor({ config = null, host = null, db = null }) {
     this.sequelize = null
@@ -42,9 +43,12 @@ class ORM {
   }
   async model(tableName) {
     const modelPath = `${global.dir.root}/models/${this.hostId}/${this.dbName}/${tableName}.json`
+    const model = getModel(this.sequelize, modelPath)
+    /*
     console.log(`load modelPath=${modelPath}`)
     const jsonData = await readJSON(modelPath)
     const model = this.getModelFromJson(jsonData)
+    */
     return model
   }
   // 取得model內的設定 欄位類型,pk等.., null代表錯誤
@@ -157,13 +161,24 @@ class ORM {
     }
     return result
   }
+  /* 已經透過 sequelize-auto/lib/util/getModel 取代
   // 將json設定值轉成model物件
   getModelFromJson(data) {
     // console.log('data==')
     // console.log(data)
     for (const prop in data[0]) {
-      data[0][prop].type = this.getTypeFromStr(data[0][prop].type)
+      if (data[0][prop].type) {
+        data[0][prop].type = this.getTypeFromStr(data[0][prop].type)
+      }
+      if (data[0][prop].defaultValue) {
+        const checkValue = data[0][prop].defaultValue.toLowerCase()
+        const seed = ['current_timestamp', 'current_date', 'current_time', 'localtime', 'localtimestamp']
+        if (seed.indexOf(checkValue) !== -1) {
+          data[0][prop].defaultValue = this.sequelize.literal(`'${data[0][prop].defaultValue}'`)
+        }
+      }
     }
+    
     return this.sequelize.define(data[1].tableName, data[0], data[1])
   }
   // 將 'DataTypes.STRING(10)' 這樣字串轉成 Sequelize.DataTypes.STRING(10)
@@ -178,6 +193,7 @@ class ORM {
       return Sequelize.DataTypes[typeStr]
     }
   }
+  */
   /* 透過js取得model 廢棄不用 由 /models/目錄已產生的js檔 產生model物件 model: { dataValues:..}
   async model(tableName) {
     try {

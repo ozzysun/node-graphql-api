@@ -9,7 +9,7 @@ const createTableType = async(host, db, table) => {
   const jsonData = await readJSON(modelPath)
   // 1. 建立table object type
   const typeData = {
-    name: table,
+    name: `${host}_${db}_${table}`,
     fields: []
   }
   for (const prop in jsonData[0]) {
@@ -27,7 +27,7 @@ const createTableType = async(host, db, table) => {
 const createDbType = async(host, db) => {
   // 1. 建立table object type
   const typeData = {
-    name: db,
+    name: `${host}_${db}`,
     fields: []
   }
   // 取得指定db下table 列表當作field

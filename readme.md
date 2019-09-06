@@ -131,6 +131,10 @@
 1. 建立
      - url: http://localhost:3138/global/model/build/:host/:db
      - method: get
+     - 參數 attributes(非必填): 要查詢的欄位以 ,分隔字串列出,預設 未帶attributes則載入全部
+     - 參數 page(非必填): 查詢第幾頁,不帶 預設為第一頁
+     - 參數 perPage(非必填): 每頁幾筆,不帶 預設不分頁載入全部
+     - ex: http://localhost:3138/global/model/build/:host/:db?attributes=a,b,c
 ### 單一Table 通用API
 1. 查詢
      - url: http://localhost:3138/global/db/:host/:db/:table
@@ -164,13 +168,29 @@
       {
         host名稱{
           db名稱{
-                table名稱 {
+               table名稱(page:1, perPage:10) {
                     欄位..
-                }
+               }
           }
         }
       }
      ```
+### REST 與Graphql 對照
+1. 透過通用API查詢
+   ```
+   http://localhost:3138/global/db/:myHost/:myDb/:myTable?attributes=column1,column2
+   ```
+2. 透過graphql查詢
+   ```
+   myHost {
+    myDb {
+      myTable(page:1, perPage:10) {
+        column1
+        column2
+      }
+    }
+  }
+   ```
 
         
    
