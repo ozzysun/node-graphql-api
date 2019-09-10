@@ -1,4 +1,4 @@
-## node-api 說明
+## node-graphhql-api 說明
 ### 功能
 * 提供Restful API 資料服務架構
 * 提供graphql 資料服務架構

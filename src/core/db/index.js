@@ -89,7 +89,7 @@ const getQueryOption = ({ params, page, perPage, attributes }) => {
     if (Array.isArray(attributes)) {
       queryOpts.attributes = attributes
     } else if (typeof attributes === 'string') {
-      queryOpts.attributes = attributes.indexOf(',') !== -1 ? attributes.split(',') : attributes
+      queryOpts.attributes = attributes.indexOf(',') !== -1 ? attributes.split(',') : [attributes]
     }
   }
   // 排序
