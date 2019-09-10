@@ -178,7 +178,7 @@ class ORM {
         }
       }
     }
-    
+
     return this.sequelize.define(data[1].tableName, data[0], data[1])
   }
   // 將 'DataTypes.STRING(10)' 這樣字串轉成 Sequelize.DataTypes.STRING(10)

@@ -10,8 +10,8 @@
     "build": "pkg package.json --out-dir output",
     "compile": "babel -s inline -d dist src",
     "clean": "rimraf dist/*",
-    "lint": "eslint --ext .js src/**/** tests/**/**",
-    "lint-watch": "esw -w src/**/** tests/**/**",
+    "lint": "eslint --ext .js src/**/**/*.js tests/**/**/*.js --fix",
+    "lint-watch": "esw -w src/**/**/*.js tests/**/**/*.js",
     "test:unit": "nyc mocha -c ./tests/**/*.test.js 2>&1 | tee test.report.log "
   },
   "repository": {
@@ -30,8 +30,8 @@
   "devDependencies": {
     "@babel/core": "^7.5.5",
     "@babel/node": "^7.5.5",
-    "babel-eslint": "^10.0.2",
-    "eslint": "^6.1.0",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.3.0",
     "eslint-config-node": "^4.0.0",
     "eslint-watch": "^6.0.0",
     "fs-extra": "^8.1.0",
@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.4.4",
-    "apollo-server-express": "^2.9.2",
+    "apollo-server-express": "^2.9.3",
     "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "consolidate": "^0.15.1",

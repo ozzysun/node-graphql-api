@@ -1,12 +1,11 @@
-const { rootRequire, supertest, sinon, startServer } = require('../../tool')
+const { rootRequire, sinon, startServer } = require('../../tool')
 const { buildModel, writeCheckFile } = rootRequire('src/core/db/modelBuilder')
-let server, api
+let server
 describe('[core/db/modelBuilder]', () => {
   before((done) => {
     // 測試前需要執行的工作
     startServer({ socket: { enable: false }}).then(response => {
       server = response.server
-      api = supertest(server)
       writeCheckFile() // 清除check file
       done()
     })

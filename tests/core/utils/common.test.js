@@ -1,6 +1,5 @@
-const { rootResolve, rootRequire, sinon, startServer } = require('../../tool')
+const { rootResolve, rootRequire, sinon } = require('../../tool')
 const { str2Obj, str2Array, jwtEncode, jwtDecode } = rootRequire('src/core/utils/common')
-let server
 describe('[core/utils/common]', () => {
   it('1.1 字串轉物件(str2Obj):', () => {
     const result = str2Obj('x=1&y=2')

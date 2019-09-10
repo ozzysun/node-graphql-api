@@ -1,4 +1,4 @@
-const { createObjectType } = require('../../../core/graphql/util')
+const { createType } = require('../../../core/graphql/util')
 const typeData = {
   name: 'Sample',
   fields: [
@@ -28,4 +28,4 @@ const typeData = {
     }
   ]
 }
-module.exports = createObjectType(typeData.name, typeData.fields)
+module.exports = createType(typeData.name, typeData.fields)

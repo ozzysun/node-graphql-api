@@ -42,7 +42,7 @@ const writeFile = async(filePath, str) => {
     })
   })
 }
-// 取得指定目錄內所有檔案 type: default:檔名＋ext| name: 只有檔名 不含 ext | full 完整路徑
+// 取得指定目錄內所有檔案 type: default:檔名＋ext| name: 只有檔名 不含 ext | full 完整路徑 | folder 取得目錄列表
 const loadFolderFiles = async(folderPath, ext = null, type = 'default') => {
   return new Promise((resolve, reject) => {
     fs.readdir(folderPath, (err, files) => {
@@ -50,7 +50,8 @@ const loadFolderFiles = async(folderPath, ext = null, type = 'default') => {
         reject(err)
       } else {
         let allowFiles = []
-        if (ext !== null) files = files.filter((item) => item.indexOf(`.${ext}`) !== -1)
+        if (ext !== null && ext !== 'folder') files = files.filter((item) => item.indexOf(`.${ext}`) !== -1)
+        if (ext === 'folder') files = files.filter((item) => item.indexOf(`.`) === -1)
         if (type === 'name') {
           files.forEach(item => {
             allowFiles.push(item.replace(`.${ext}`, ''))

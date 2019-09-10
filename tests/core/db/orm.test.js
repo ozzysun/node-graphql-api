@@ -1,6 +1,6 @@
-const { rootRequire, supertest, sinon, startServer } = require('../../tool')
+const { rootRequire, sinon, startServer } = require('../../tool')
 const ORM = rootRequire('src/core/db/orm')
-let server, api
+let server
 const testDb = { // 測試連線資料
   host: 'dbLocal',
   db: 'api_sysdb',
@@ -11,7 +11,7 @@ describe('[core/db/orm]', () => {
     // 測試前需要執行的工作
     startServer({ socket: { enable: false }}).then(response => {
       server = response.server
-      api = supertest(server)
+      // api = supertest(server)
       done()
     })
   })

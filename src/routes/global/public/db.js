@@ -1,5 +1,5 @@
 const RouteClass = require('../../../core/RouteClass')
-const { query, create, update, destroy, upsert } = require('../../../core/db')
+const { query, create, update, destroy } = require('../../../core/db')
 const { buildModel, writeCheckFile } = require('../../../core/db/modelBuilder')
 class Route extends RouteClass {
   routes() {

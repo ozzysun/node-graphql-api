@@ -1,11 +1,10 @@
 const path = require('path')
-const { readJSON, loadFolderFiles } = require('../../core/utils/file')
-const { createObjectType } = require('../../core/graphql/util')
-const ORM = require('../../core/db/orm')
+const { createType } = require('./util')
+const ORM = require('../db/orm')
+const { readJSON, loadFolderFiles } = require('../utils/file')
 // 建立 指定table的ObjectType 之後用來當作db的欄位field
 const createTableType = async(host, db, table) => {
   const modelPath = path.resolve(`./models/${host}/${db}/${table}.json`)
-  // console.log(`load modelPath=${modelPath}`)
   const jsonData = await readJSON(modelPath)
   // 1. 建立table object type
   const typeData = {
@@ -19,9 +18,7 @@ const createTableType = async(host, db, table) => {
     }
     typeData.fields.push(fieldObj)
   }
-  // console.log('table typeData=')
-  // console.log(typeData)
-  return createObjectType(typeData.name, typeData.fields)
+  return createType(typeData.name, typeData.fields)
   // 建立 table query
 }
 const createDbType = async(host, db) => {
@@ -54,19 +51,13 @@ const createDbType = async(host, db) => {
             offset: (page - 1) * perPage,
             limit: perPage
           })
-          /*
-          const sql = `select * from ${tableName} limit 10`
-          const response = await orm.query(sql)
-          */
           return response.rows
         }
       }
       typeData.fields.push(fieldObj)
     }
   }
-  // console.log('db typeData==')
-  // console.log(typeData)
-  return createObjectType(typeData.name, typeData.fields)
+  return createType(typeData.name, typeData.fields)
 }
 const createHostType = async(host, dbs) => {
   // 1. 建立host object type
@@ -81,42 +72,29 @@ const createHostType = async(host, dbs) => {
       name: dbName,
       type: dbType,
       resolve: async(parent, args, context, info) => {
-        return { host, db: dbName }
+        return args
       }
     }
     typeData.fields.push(fieldObj)
   }
-  // console.log('host typeData==')
-  // console.log(typeData)
-  return createObjectType(typeData.name, typeData.fields)
+  return createType(typeData.name, typeData.fields)
 }
-const createOrmQuery = async(host, dbs) => {
-  const hostType = await createHostType(host, dbs)
-  const schemaData = {
-    name: host,
-    type: hostType,
-    resolve: async(parent, args, context, info) => {
-      return { host, dbs }
-    }
-  }
-  return schemaData
-}
-// 將orm type轉成字串 , 字串之後再轉成scalar type
+// 將orm type轉成字串 , 字串之後會被用來轉成scalar type
 const converType = (ormTypeStr) => {
   const stringPatt = new RegExp(/STRING|TEXT|DATE/)
   const intPatt = new RegExp(/INTEGER|BIGINT/)
   const floatPatt = new RegExp(/FLOAT|DECIMAL|DOUBLE/)
   const booleanPatt = new RegExp(/BOOLEAN/)
-  if (stringPatt.test(stringPatt)) {
+  if (stringPatt.test(ormTypeStr)) {
     return 'string'
-  } else if (intPatt.test(stringPatt)) {
+  } else if (intPatt.test(ormTypeStr)) {
     return 'int'
-  } else if (floatPatt.test(stringPatt)) {
+  } else if (floatPatt.test(ormTypeStr)) {
     return 'float'
-  } else if (booleanPatt.test(stringPatt)) {
+  } else if (booleanPatt.test(ormTypeStr)) {
     return 'boolean'
   } else {
     return 'string'
   }
 }
-module.exports = { createOrmQuery }
+module.exports = { createTableType, createDbType, createHostType }
