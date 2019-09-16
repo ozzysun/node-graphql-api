@@ -11,7 +11,12 @@ const loadQuery = async(rootConfig) => {
   const files = await loadFolderFiles(filePath, 'js', 'full')
   for (let i = 0; i < files.length; i++) {
     const querySchema = global.require2(files[i]) // 取得query設定
-    rootConfig.fields[querySchema.name] = getFieldConfig(querySchema) // 產生query並設定到root fields下
+    if (typeof querySchema === 'object') {
+      rootConfig.fields[querySchema.name] = getFieldConfig(querySchema) // 產生query並設定到root fields下
+    } else if (typeof querySchema === 'function') {
+      const asyncQuerySchema = await querySchema()
+      rootConfig.fields[querySchema.name] = getFieldConfig(asyncQuerySchema)
+    }
   }
   return rootConfig
 }

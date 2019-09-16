@@ -1,14 +1,10 @@
-const { createType } = require('../../../core/graphql/util')
+const { createType } = require('../../../../core/graphql/util')
 const getType = () => {
   const typeData = {
-    name: 'user',
+    name: 'menu',
     fields: [
       {
-        name: 'name',
-        type: 'string'
-      },
-      {
-        name: 'age',
+        name: 'id',
         type: 'int'
       }
     ]

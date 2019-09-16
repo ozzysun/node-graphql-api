@@ -4,7 +4,7 @@ module.exports = {
   args: [
     { name: 'name', type: 'string' }
   ],
-  resolve: (parent, args, context, info) => {
-    return `hello !! ${args.name}`
+  resolve: (parent, { name, type }, context, info) => {
+    return `hello !! ${name} type=${type}`
   }
 }

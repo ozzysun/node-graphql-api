@@ -3,12 +3,12 @@ const { createType } = require('./util')
 const ORM = require('../db/orm')
 const { readJSON, loadFolderFiles } = require('../utils/file')
 // 建立 指定table的ObjectType 之後用來當作db的欄位field
-const createTableType = async(host, db, table) => {
+const createTableType = async({ host, db, table, name }) => {
   const modelPath = path.resolve(`./models/${host}/${db}/${table}.json`)
   const jsonData = await readJSON(modelPath)
   // 1. 建立table object type
   const typeData = {
-    name: `${host}_${db}_${table}`,
+    name: name !== undefined ? name : `${host}_${db}_${table}`,
     fields: []
   }
   for (const prop in jsonData[0]) {
@@ -21,22 +21,22 @@ const createTableType = async(host, db, table) => {
   return createType(typeData.name, typeData.fields)
   // 建立 table query
 }
-const createDbType = async(host, db) => {
+const createDbType = async({ host, db, name }) => {
   // 1. 建立table object type
   const typeData = {
-    name: `${host}_${db}`,
+    name: name !== undefined ? name : `${host}_${db}`,
     fields: []
   }
   // 取得指定db下table 列表當作field
   const filePath = path.resolve(`./models/${host}/${db}`)
   const tables = await loadFolderFiles(filePath, 'json', 'name')
   for (let i = 0; i < tables.length; i++) {
-    const tableName = tables[i]
+    const table = tables[i]
     // table名稱有-則跳過
-    if (tableName.indexOf('-') === -1) {
-      const tableType = await createTableType(host, db, tableName)
+    if (table.indexOf('-') === -1) {
+      const tableType = await createTableType({ host, db, table })
       const fieldObj = {
-        name: tableName,
+        name: table,
         type: [tableType],
         args: [
           { name: 'page', type: 'int' },
@@ -45,8 +45,8 @@ const createDbType = async(host, db) => {
         resolve: async(parent, args, context, info) => {
           const page = args.page ? args.page : 1
           const perPage = args.perPage ? args.perPage : 10
-          const orm = new ORM({ host, db, table: tableName })
-          const model = await orm.model(tableName)
+          const orm = new ORM({ host, db, table })
+          const model = await orm.model(table)
           const response = await model.findAndCountAll({
             offset: (page - 1) * perPage,
             limit: perPage
@@ -66,10 +66,10 @@ const createHostType = async(host, dbs) => {
     fields: []
   }
   for (let i = 0; i < dbs.length; i++) {
-    const dbName = dbs[i]
-    const dbType = await createDbType(host, dbName)
+    const db = dbs[i]
+    const dbType = await createDbType({ host, db })
     const fieldObj = {
-      name: dbName,
+      name: db,
       type: dbType,
       resolve: async(parent, args, context, info) => {
         return args
