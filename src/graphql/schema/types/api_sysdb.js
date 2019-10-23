@@ -1,5 +1,5 @@
 const { createType } = require('../../../core/graphql/util')
-const Sample = require('./Sample')
+const Sample = require('./sample')
 const ORM = require('../../../core/db/orm')
 const getType = () => {
   const typeData = {
