@@ -12,6 +12,7 @@ const jwt = require('./jwt')
 const { createGraphql } = require('../../graphql')
 const OZSocket = require('./socket')
 const session = require('express-session')
+const path = require('path')
 const getRouter = async(port, staticPath = './public') => {
   try {
     // 產生express app 與router, server
@@ -109,11 +110,17 @@ const modifyRoutesConfig = (routesConfig) => {
         publicItem[prop] = item[prop]
         privateItem[prop] = item[prop]
       }
-      publicItem.dir = `${binPath}/${publicItem.dir}/public` // 放置開放的目錄
       delete publicItem.auth
       privateItem.id = `${privateItem.ns}_s`
-      privateItem.dir = `${binPath}/${privateItem.dir}/private` // 放置需要token驗證的目錄
       privateItem.ns = `${privateItem.ns}/s` // 需要token驗證的網址
+      if (publicItem.submodule) {
+        console.log(`path=${path.resolve(publicItem.dir)}`)
+        publicItem.dir = `${path.resolve(publicItem.dir)}/public` // 放置開放的目錄
+        privateItem.dir = `${path.resolve(privateItem.dir)}/private` // 放置需要token驗證的目錄
+      } else {
+        publicItem.dir = `${binPath}/${publicItem.dir}/public` // 放置開放的目錄
+        privateItem.dir = `${binPath}/${privateItem.dir}/private` // 放置需要token驗證的目錄
+      }
       // 建立private 與 public
       result.push(privateItem)
       result.push(publicItem)
