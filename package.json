@@ -79,6 +79,6 @@
     "request-ip": "^2.1.3",
     "sequelize": "^5.18.4",
     "sequelize-auto": "github:ozzysun/sequelize-auto",
-    "socket.io": "^2.2.0"
+    "socket.io": "^2.4.0"
   }
 }
