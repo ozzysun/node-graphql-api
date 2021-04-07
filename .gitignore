@@ -10,3 +10,4 @@ node_modules
 /testsample
 /.nyc_output
 /models
+package-lock.json
