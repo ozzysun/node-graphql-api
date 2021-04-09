@@ -3,6 +3,7 @@ const fs = require('fs-extra')
 const jsonfile = require('jsonfile')
 const yaml = require('js-yaml')
 const path = require('path')
+const _ = require('lodash')
 // -- File ---------
 const isFileExist = async(filePath) => {
   return new Promise((resolve, reject) => {
@@ -42,7 +43,7 @@ const writeFile = async(filePath, str) => {
     })
   })
 }
-// 取得指定目錄內所有檔案 type: default:檔名＋ext| name: 只有檔名 不含 ext | full 完整路徑 | folder 取得目錄列表
+// 取得指定目錄內所有檔案 type: default:檔名＋ext| name: 只有檔名 不含 ext | full 完整路徑
 const loadFolderFiles = async(folderPath, ext = null, type = 'default') => {
   return new Promise((resolve, reject) => {
     fs.readdir(folderPath, (err, files) => {
@@ -50,8 +51,7 @@ const loadFolderFiles = async(folderPath, ext = null, type = 'default') => {
         reject(err)
       } else {
         let allowFiles = []
-        if (ext !== null && ext !== 'folder') files = files.filter((item) => item.indexOf(`.${ext}`) !== -1)
-        if (ext === 'folder') files = files.filter((item) => item.indexOf(`.`) === -1)
+        if (ext !== null) files = files.filter((item) => item.indexOf(`.${ext}`) !== -1)
         if (type === 'name') {
           files.forEach(item => {
             allowFiles.push(item.replace(`.${ext}`, ''))
@@ -67,6 +67,17 @@ const loadFolderFiles = async(folderPath, ext = null, type = 'default') => {
       }
     })
   })
+}
+const writeFileFromTpl = async(tplPath, targetPath, data, trim = false) => {
+  const tpl = await readFile(tplPath)
+  const compiled = _.template(tpl)
+  let compiledData = compiled(data)
+  compiledData = _.trim(compiledData)
+  // 無法消除空白行 先全部清除
+  if (trim) compiledData = compiledData.replace(/\r|\n|\s/g, '')
+  // console.log(compiledData)
+  const result = await writeFile(targetPath, compiledData)
+  return result
 }
 // -- Folder ----
 const copyFolder = async(sourcePath, targetPath) => {
@@ -143,7 +154,7 @@ const writeYAML = async(filePath, jsonObj = null) => {
   })
 }
 module.exports = {
-  readFile, writeFile, isFileExist, loadFolderFiles,
+  readFile, writeFile, isFileExist, loadFolderFiles, writeFileFromTpl,
   copyFolder, removeFolder,
   readJSON, writeJSON,
   readYAML, writeYAML

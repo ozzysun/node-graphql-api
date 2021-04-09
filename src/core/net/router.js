@@ -13,7 +13,8 @@ const { createGraphql } = require('../../graphql')
 const OZSocket = require('./socket')
 const session = require('express-session')
 const path = require('path')
-const getRouter = async(port, staticPath = './public') => {
+const { isFileExist } = require('../utils/file')
+const getRouter = async(port, staticPath = './public', routes, require2) => {
   try {
     // 產生express app 與router, server
     const { router, app, server } = await createAPIServer(port, staticPath)
@@ -21,7 +22,7 @@ const getRouter = async(port, staticPath = './public') => {
     if (global.config.socket.enable) {
       socket = await createSocketServer(global.config.socket.port, app)
     }
-    await getRoutes(router, global.routes)
+    await getRoutes(router, routes, require2)
     return { router, app, server, socket }
   } catch (e) {
     console.log(e)
@@ -61,6 +62,7 @@ const createAPIServer = async(apiPort = 3138, staticPath = './public') => {
   // graphql
   const useGraphql = await createGraphql()
   useGraphql(router)
+  app.use(errorHandler)
   // -- router setting ------
   router.use(beforeAfter)
   router.use(jwt)
@@ -77,18 +79,21 @@ const createSocketServer = async(port, app) => {
   return socket
 }
 // 依照routesConfig設定 載入指定的route檔案
-const getRoutes = async(app, routesConfig) => {
+const getRoutes = async(app, routesConfig, require2) => {
   try {
     // routesConfig = modifyConfigData(routesConfig)
     for (let i = 0; i < routesConfig.length; i++) {
       const routeData = routesConfig[i]
-      const files = await loadFolderFiles(routeData.dir, 'js', 'name')
-      files.forEach(filename => {
-        const requirePath = `${routeData.dir}/${filename}`
-        const RouteClass = global.require2(requirePath)
-        const opt = { app, ns: routeData.ns, host: routeData.host, db: routeData.db, filename: requirePath }
-        new RouteClass(opt)
-      })
+      const isExist = await isFileExist(routeData.dir)
+      if (isExist) {
+        const files = await loadFolderFiles(routeData.dir, 'js', 'name')
+        files.forEach(filename => {
+          const requirePath = `${routeData.dir}/${filename}`
+          const RouteClass = require2(requirePath)
+          const opt = { app, ns: routeData.ns, host: routeData.host, db: routeData.db, filename: requirePath }
+          new RouteClass(opt)
+        })
+      }
     }
     return true
   } catch (e) {
@@ -96,8 +101,7 @@ const getRoutes = async(app, routesConfig) => {
   }
 }
 // 將routes設定 轉換dir 轉為絕對路徑, 並產生private 與public目錄設定
-const modifyRoutesConfig = (routesConfig) => {
-  const binPath = global.dir.bin
+const modifyRoutesConfig = (routesConfig, binPath) => {
   const result = []
   routesConfig.forEach(item => {
     // enable 的目錄才會載入
@@ -127,5 +131,14 @@ const modifyRoutesConfig = (routesConfig) => {
     }
   })
   return result
+}
+const errorHandler = (err, req, res, next) => {
+  console.log(`[Router]接收到 錯誤`)
+  console.log(err)
+  if (err instanceof Error) {
+    res.status(500).send(err.message)
+  } else {
+    res.status(500).send(err)
+  }
 }
 module.exports = { getRouter, modifyRoutesConfig }
